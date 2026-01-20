@@ -322,7 +322,7 @@ plt.show()
 # Aplicar o modelo em TODO o dataset para o cenário de otimização
 df_tests['prob_failure'] = model.predict_proba(df_tests[features])[:, 1]
 
-# Definir um tempo de reparo médio (ex: 60 min se falhar)
+# Definir um tempo de reparo médio 
 REPAIR_TIME = 60
 
 # Calcular Duração Esperada = Duração Teste + (Prob. Falha * Tempo Reparo)
@@ -383,7 +383,7 @@ def optimize_multi_bay(df, n_bays=3):
     for j in bays:
         prob += pulp.lpSum([x[i][j] * df.loc[i, 'expected_duration'] for i in tests]) <= Cmax
         
-    # Restrição de Balanceamento de Prioridade:
+    
 
     # Resolver
     prob.solve(pulp.PULP_CBC_CMD(msg=1, timeLimit=60, gapRel=0.05))
@@ -504,7 +504,6 @@ def validate_schedule_robustness(schedule_df, n_simulations=1000, repair_time=60
     # Agrupa quais testes estão em qual baia (conforme decidido pelo otimizador)
     bays_allocation = schedule_df.groupby('bay')['test_id'].apply(list).to_dict()
     
-    # Dicionário para acesso rápido aos parâmetros originais
     # Aqui usamos os dados originais para simular a 'Realidade'
     original_data = df_tests.set_index('test_id')
     
@@ -548,7 +547,7 @@ simulated_makespans = validate_schedule_robustness(df_scheduled, n_simulations=2
 plt.figure(figsize=(12, 6))
 sns.histplot(simulated_makespans, kde=True, color='purple', alpha=0.6)
 
-# Linhas de referência
+
 mean_time = np.mean(simulated_makespans)
 p95_time = np.percentile(simulated_makespans, 95)
 planned_time = final_makespan # O valor que o otimizador prometeu
@@ -605,8 +604,7 @@ def plot_gantt(df_sched):
         current_time = 0
         
         for _, row in bay_data.iterrows():
-            # CORREÇÃO AQUI: int(row['priority'])
-            # Forçamos o valor a ser inteiro para usar como índice da lista de cores
+            
             priority_idx = int(row['priority'])
             
             ax.barh(
@@ -618,12 +616,12 @@ def plot_gantt(df_sched):
                 alpha=0.8
             )
             
-            # Texto dentro da barra
+            
             if row['duration_risk'] > 20:
                 ax.text(
                     current_time + row['duration_risk']/2, 
                     bay, 
-                    str(int(row['test_id'])), # Também convertemos ID para int para ficar bonito (ex: "10" e não "10.0")
+                    str(int(row['test_id'])), 
                     ha='center', va='center', color='white', fontsize=8, weight='bold'
                 )
             
@@ -633,7 +631,7 @@ def plot_gantt(df_sched):
     plt.xlabel('Tempo Acumulado (minutos)')
     plt.ylabel('Recursos')
     
-    # Legenda customizada
+    
     patches = [plt.Rectangle((0,0),1,1, color=colors[i]) for i in range(1, 6)]
     plt.legend(patches, [f'Prioridade {i}' for i in range(1, 6)], loc='upper right')
     
@@ -653,7 +651,7 @@ plot_gantt(df_scheduled)
 
 
 ```python
-# Validação via Monte Carlo ---
+# Validação via Monte Carlo 
 
 def simulate_schedule_execution(schedule_df, n_simulations=1000):
     makespans = []
@@ -661,7 +659,7 @@ def simulate_schedule_execution(schedule_df, n_simulations=1000):
     # Agrupar testes por baia conforme definido pelo otimizador
     bays_allocation = schedule_df.groupby('bay')['test_id'].apply(list).to_dict()
     
-    # Dicionário auxiliar para buscar dados reais rapidamente
+    
     original_data = df_tests.set_index('test_id')
     
     for _ in range(n_simulations):
@@ -680,7 +678,7 @@ def simulate_schedule_execution(schedule_df, n_simulations=1000):
                 # Vamos usar a prob do modelo para ser justo com o planejador
                 is_fail = np.random.binomial(1, original_data.loc[tid, 'prob_failure'])
                 
-                actual_duration = base_duration + (is_fail * 60) # 60 min de reparo
+                actual_duration = base_duration + (is_fail * 60) 
                 total_time += actual_duration
             
             bay_times.append(total_time)
