@@ -349,7 +349,7 @@ Objetivo:
 - Minimizar o tempo total ponderado pela prioridade e risco de falha.
 
 Restrições:
-- Apenas uma baia de teste
+- Apenas 3 baias de teste
 - Testes executados sequencialmente
 
 
@@ -362,7 +362,6 @@ def optimize_multi_bay(df, n_bays=3):
     prob = pulp.LpProblem("Multi_Bay_Scheduling", pulp.LpMinimize)
     
     # Variáveis de decisão: x[i][j] = 1 se o teste i for alocado na baia j
-    # Usamos índices inteiros para facilitar
     tests = df.index.tolist()
     bays = range(n_bays)
     
