@@ -349,7 +349,7 @@ Objetivo:
 - Minimizar o tempo total ponderado pela prioridade e risco de falha.
 
 Restrições:
-- Apenas 3 baias de teste
+- Apenas uma baia de teste
 - Testes executados sequencialmente
 
 
