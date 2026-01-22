@@ -358,7 +358,7 @@ Restrições:
 #  Otimização com Múltiplas Baias ---
 
 def optimize_multi_bay(df, n_bays=3):
-    # Criar o problema: Minimizar o Makespan (o tempo da baia que termina por último)
+    # Problema: Minimizar o Makespan (o tempo da baia que termina por último)
     prob = pulp.LpProblem("Multi_Bay_Scheduling", pulp.LpMinimize)
     
     # Variáveis de decisão: x[i][j] = 1 se o teste i for alocado na baia j
